@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+float generateRandomNumber(float min, float max) {
+if (min > max) {
+float temp = min;
+min = max;
+max = temp;
+}
+float range = max - min;
+float number = ((float)rand() / RAND_MAX) * range + min;
+
+return number;
+}
+
+int main() {
+srand((unsigned int)time(NULL));
+
+int inp;
+printf("Enter input size: ");
+scanf("%d", &inp);
+
+if (inp <= 0) {
+printf("Invalid input size.\n");
+return 1;
+}
+
+float* temp = (float*)malloc(sizeof(float) * inp);
+if (!temp) {
+printf("Memory allocation failed.\n");
+return 1;
+}
+
+for (int i = 0; i < inp; i++) {
+
+temp[i] = generateRandomNumber(-20.0f, 50.0f);
+}
+
+for (int i = 0; i < inp - 1; i++) {
+for (int j = 0; j < inp - i - 1; j++) {
+if (temp[j] > temp[j + 1]) {
+float t = temp[j];
+temp[j] = temp[j + 1];
+temp[j + 1] = t;
+}
+}
+}
+
+clock_t start_time = clock();
+int index = -1;
+for (int i = 0; i < inp; i++) {
+if (temp[i] >= 30.0f) {
+index = i;
+break;
+}
+}
+clock_t end_time = clock();
+
+printf("Element found at index for Linear Search:
+%d\nTime Taken to execute: %f ms\n\n",
+index, ((double)(end_time - start_time) /
+CLOCKS_PER_SEC) * 1000);
+
+int left = 0, right = inp - 1;
+index = -1;
+start_time = clock();
+while (left <= right) {
+int mid = left + (right - left) / 2;
+if (temp[mid] >= 30.0f) {
+index = mid;
+right = mid - 1;
+} else {
+left = mid + 1;
+}
+}
+end_time = clock();
+printf("Element found at index for Binary Search:
+%d\nTime Taken to execute: %f ms\n\n",
+index, ((double)(end_time - start_time) /
+CLOCKS_PER_SEC) * 1000);
+
+free(temp);
+return 0;
+}
